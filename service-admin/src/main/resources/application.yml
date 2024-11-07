@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: eren
+  profiles:
+    active: dev
+  jackson:
+    # 序列化后的日期时间格式
+    date-format: yyyy-MM-dd HH:mm:ss
+    # 中国的东八时区
+    time-zone: GMT+8
+
+mybatis-flex:
+  global-config:
+    print-banner: false
+
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: mysql
+  supportMethodsArguments: true
+  params: count=countSql
