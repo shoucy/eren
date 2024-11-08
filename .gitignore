@@ -4,35 +4,11 @@ target/
 !**/src/test/**/target/
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
-*.iml
-*.ipr
-
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# idea的配置文件夹可能会出现很多诡异的东西，比如连接数据库的账号密码，和colplot之间的历史聊天记录
+.idea/
 
 ### VS Code ###
-.vscode/
+#.vscode/文件夹中包含快捷代码模版，插件推荐及配置，建议提交
 
 ### Mac OS ###
 .DS_Store
