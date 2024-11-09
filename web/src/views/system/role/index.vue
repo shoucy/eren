@@ -97,17 +97,17 @@ onMounted(() => {
       :model="form"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px] overflow-auto"
     >
-      <el-form-item label="角色名称：" prop="name">
+      <el-form-item label="角色名称：" prop="roleName">
         <el-input
-          v-model="form.name"
+          v-model="form.roleName"
           placeholder="请输入角色名称"
           clearable
           class="!w-[180px]"
         />
       </el-form-item>
-      <el-form-item label="角色标识：" prop="code">
+      <el-form-item label="角色标识：" prop="roleCode">
         <el-input
-          v-model="form.code"
+          v-model="form.roleCode"
           placeholder="请输入角色标识"
           clearable
           class="!w-[180px]"
@@ -146,7 +146,7 @@ onMounted(() => {
       <PureTableBar
         :class="[isShow && !deviceDetection() ? '!w-[60vw]' : 'w-full']"
         style="transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1)"
-        title="角色管理（仅演示，操作后不生效）"
+        title="角色管理"
         :columns="columns"
         @refresh="onSearch"
       >
@@ -193,7 +193,7 @@ onMounted(() => {
                 修改
               </el-button>
               <el-popconfirm
-                :title="`是否确认删除角色名称为${row.name}的这条数据`"
+                :title="`是否确认删除角色名称为${row.roleName}的这条数据`"
                 @confirm="handleDelete(row)"
               >
                 <template #reference>
@@ -293,7 +293,7 @@ onMounted(() => {
           </div>
           <p class="font-bold truncate">
             菜单权限
-            {{ `${curRow?.name ? `（${curRow.name}）` : ""}` }}
+            {{ `${curRow?.roleName ? `（${curRow.roleName}）` : ""}` }}
           </p>
         </div>
         <el-input

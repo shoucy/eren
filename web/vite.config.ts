@@ -24,7 +24,20 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       port: VITE_PORT,
       host: "0.0.0.0",
       // 本地跨域代理 https://cn.vitejs.dev/config/server-options.html#server-proxy
-      proxy: {},
+      proxy: {
+        // springboot后台开发环境
+        "/dev-api/sys": {
+          target: "http://127.0.0.1:8800",
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/dev-api/, "")
+        },
+        // 后台接口还没有开发则使用mock接口
+        "/dev-api/": {
+          target: "http://127.0.0.1:8848",
+          changeOrigin: true,
+          rewrite: path => "/mock/" + path.replace(/^\/dev-api/, "")
+        }
+      },
       // 预热文件以提前转换和缓存结果，降低启动期间的初始页面加载时长并防止转换瀑布
       warmup: {
         clientFiles: ["./index.html", "./src/{views,components}/*"]

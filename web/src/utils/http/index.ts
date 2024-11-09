@@ -14,10 +14,13 @@ import NProgress from "../progress";
 import { getToken, formatToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
 
+export const PATH_URL = import.meta.env.VITE_API_BASE_PATH;
+
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
   // 请求超时时间
   timeout: 10000,
+  baseURL: PATH_URL,
   headers: {
     Accept: "application/json, text/plain, */*",
     "Content-Type": "application/json",

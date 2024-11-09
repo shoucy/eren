@@ -8,6 +8,7 @@ type Result = {
 type ResultTable = {
   success: boolean;
   data?: {
+    // 兼容原先mockjs的返回格式
     /** 列表数据 */
     list: Array<any>;
     /** 总条目数 */
@@ -16,6 +17,18 @@ type ResultTable = {
     pageSize?: number;
     /** 当前页数 */
     currentPage?: number;
+
+    // 后台实际的分页字段
+    /** 当前页数据 */
+    records: Array<any>;
+    /** 当前页码 */
+    pageNumber?: number;
+    /** 每页数据数量  */
+    // pageSize;
+    /** 总页数 */
+    totalPage?: number;
+    /** 总数据数量 */
+    totalRow?: number;
   };
 };
 
@@ -36,7 +49,14 @@ export const getRoleIds = (data?: object) => {
 
 /** 获取系统管理-角色管理列表 */
 export const getRoleList = (data?: object) => {
-  return http.request<ResultTable>("post", "/role", { data });
+  return http.request<ResultTable>("get", "/sys/role", { data });
+  // return http.request<ResultTable>("post", "/role", { data });
+};
+
+/** 系统管理-角色管理-新增角色 */
+export const saveRole = (data?: object) => {
+  return http.request<ResultTable>("post", "/sys/role", { data });
+  // return http.request<ResultTable>("post", "/role", { data });
 };
 
 /** 获取系统管理-菜单管理列表 */

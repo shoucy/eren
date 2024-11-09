@@ -1,0 +1,38 @@
+# 开发环境配置
+server:
+  port: 8800
+spring:
+  datasource:
+#    type: com.zaxxer.hikari.HikariDataSource
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 东八区、使用ssl、uft8编码
+    url: jdbc:mysql://localhost:3306/eren?serverTimezone=GMT%2B8&useSSL=true&characterEncoding=utf8
+    username: root
+    password: freedom
+  # 控制台彩色日志
+  output:
+    ansi:
+      enabled: ALWAYS
+
+mybatis-plus:
+  configuration:
+    # 日志打印
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'admin'
+      paths-to-match: '/sys/**'
+      packages-to-scan: com.shoucy.eren.system.controller
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn

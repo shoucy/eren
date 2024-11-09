@@ -8,13 +8,18 @@ import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { getKeyList, deviceDetection } from "@pureadmin/utils";
-import { getRoleList, getRoleMenu, getRoleMenuIds } from "@/api/system";
+import {
+  getRoleList,
+  getRoleMenu,
+  getRoleMenuIds,
+  saveRole
+} from "@/api/system";
 import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
 
 export function useRole(treeRef: Ref) {
   const form = reactive({
-    name: "",
-    code: "",
+    roleName: "",
+    roleCode: "",
     status: ""
   });
   const curRow = ref();
@@ -48,11 +53,11 @@ export function useRole(treeRef: Ref) {
     },
     {
       label: "角色名称",
-      prop: "name"
+      prop: "roleName"
     },
     {
       label: "角色标识",
-      prop: "code"
+      prop: "roleCode"
     },
     {
       label: "状态",
@@ -106,7 +111,7 @@ export function useRole(treeRef: Ref) {
       `确认要<strong>${
         row.status === 0 ? "停用" : "启用"
       }</strong><strong style='color:var(--el-color-primary)'>${
-        row.name
+        row.roleName
       }</strong>吗?`,
       "系统提示",
       {
@@ -133,7 +138,7 @@ export function useRole(treeRef: Ref) {
               loading: false
             }
           );
-          message(`已${row.status === 0 ? "停用" : "启用"}${row.name}`, {
+          message(`已${row.status === 0 ? "停用" : "启用"}${row.roleName}`, {
             type: "success"
           });
         }, 300);
@@ -144,7 +149,7 @@ export function useRole(treeRef: Ref) {
   }
 
   function handleDelete(row) {
-    message(`您删除了角色名称为${row.name}的这条数据`, { type: "success" });
+    message(`您删除了角色名称为${row.roleName}的这条数据`, { type: "success" });
     onSearch();
   }
 
@@ -163,7 +168,7 @@ export function useRole(treeRef: Ref) {
   async function onSearch() {
     loading.value = true;
     const { data } = await getRoleList(toRaw(form));
-    dataList.value = data.list;
+    dataList.value = data.records;
     pagination.total = data.total;
     pagination.pageSize = data.pageSize;
     pagination.currentPage = data.currentPage;
@@ -184,8 +189,8 @@ export function useRole(treeRef: Ref) {
       title: `${title}角色`,
       props: {
         formInline: {
-          name: row?.name ?? "",
-          code: row?.code ?? "",
+          roleName: row?.roleName ?? "",
+          roleCode: row?.roleCode ?? "",
           remark: row?.remark ?? ""
         }
       },
@@ -199,18 +204,19 @@ export function useRole(treeRef: Ref) {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
         function chores() {
-          message(`您${title}了角色名称为${curData.name}的这条数据`, {
+          message(`您${title}了角色名称为${curData.roleName}的这条数据`, {
             type: "success"
           });
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
-        FormRef.validate(valid => {
+        FormRef.validate(async valid => {
           if (valid) {
             console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
               // 实际开发先调用新增接口，再进行下面操作
+              await saveRole(curData);
               chores();
             } else {
               // 实际开发先调用修改接口，再进行下面操作
@@ -246,10 +252,10 @@ export function useRole(treeRef: Ref) {
 
   /** 菜单权限-保存 */
   function handleSave() {
-    const { id, name } = curRow.value;
+    const { id, roleName } = curRow.value;
     // 根据用户 id 调用实际项目中菜单权限修改接口
     console.log(id, treeRef.value.getCheckedKeys());
-    message(`角色名称为${name}的菜单权限修改成功`, {
+    message(`角色名称为${roleName}的菜单权限修改成功`, {
       type: "success"
     });
   }

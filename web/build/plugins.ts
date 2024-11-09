@@ -45,6 +45,7 @@ export function getPluginsList(
     removeNoMatch(),
     // mock支持
     vitePluginFakeServer({
+      basename: "/mock",
       logger: false,
       include: "mock",
       infixName: false,

@@ -6,6 +6,7 @@ target/
 ### IntelliJ IDEA ###
 # idea的配置文件夹可能会出现很多诡异的东西，比如连接数据库的账号密码，和colplot之间的历史聊天记录
 .idea/
+*.iml
 
 ### VS Code ###
 #.vscode/文件夹中包含快捷代码模版，插件推荐及配置，建议提交

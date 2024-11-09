@@ -12,7 +12,7 @@ const systemManagementRouter = {
   path: "/system",
   meta: {
     icon: "ri:settings-3-line",
-    title: "menus.pureSysManagement",
+    title: "系统管理",
     rank: system
   },
   children: [
@@ -21,7 +21,7 @@ const systemManagementRouter = {
       name: "SystemUser",
       meta: {
         icon: "ri:admin-line",
-        title: "menus.pureUser",
+        title: "用户管理",
         roles: ["admin"]
       }
     },
@@ -30,7 +30,7 @@ const systemManagementRouter = {
       name: "SystemRole",
       meta: {
         icon: "ri:admin-fill",
-        title: "menus.pureRole",
+        title: "角色管理",
         roles: ["admin"]
       }
     },
@@ -39,7 +39,7 @@ const systemManagementRouter = {
       name: "SystemMenu",
       meta: {
         icon: "ep:menu",
-        title: "menus.pureSystemMenu",
+        title: "菜单管理",
         roles: ["admin"]
       }
     },
@@ -48,7 +48,7 @@ const systemManagementRouter = {
       name: "SystemDept",
       meta: {
         icon: "ri:git-branch-line",
-        title: "menus.pureDept",
+        title: "部门管理",
         roles: ["admin"]
       }
     }
