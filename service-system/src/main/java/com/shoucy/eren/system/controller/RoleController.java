@@ -28,9 +28,11 @@ public class RoleController extends BaseController {
 
     @Operation(summary = "获取角色列表")
     @GetMapping()
-    public Result<Page<Role>> getList(String roleName) {
+    public Result<Page<Role>> getList(String roleName, String roleCode, String status) {
         QueryWrapper queryWrapper = QueryWrapper.create()
-                .where(ROLE.ROLE_NAME.like(roleName));
+                .where(ROLE.NAME.like(roleName)
+                        .and(ROLE.CODE.like(roleCode))
+                        .and(ROLE.STATUS.eq(status)));
         Page<Role> roles = roleService.page(getPage(), queryWrapper);
         return Result.ok(roles);
     }
@@ -42,33 +44,24 @@ public class RoleController extends BaseController {
         return Result.ok(role);
     }
 
-    @Operation(summary = "添加角色")
+    @Operation(summary = "添加或更新角色")
     @PostMapping()
     public Result<?> save(@RequestBody Role role) {
-        roleService.save(role);
-        return Result.ok();
-    }
-
-    @Operation(summary = "修改指定角色")
-    @PutMapping("/update")
-    public Result<Object> update(Role role) {
-        boolean isSuccess = roleService.updateById(role);
-        if (isSuccess) {
-            return Result.ok();
-        } else {
-            return Result.fail();
+        // 角色代码应该唯一
+        QueryWrapper queryWrapper = QueryWrapper.create()
+                .where(ROLE.CODE.eq(role.getCode()));
+        long count = roleService.count(queryWrapper);
+        if (count != 0) {
+            return Result.fail("该角色代码已存在");
         }
+        boolean isSuccess = roleService.saveOrUpdate(role);
+        return isSuccess ? Result.ok() : Result.fail();
     }
 
     @Operation(summary = "删除指定角色")
     @DeleteMapping("/{id}")
     public Result<Object> deleteById(@PathVariable String id) {
         boolean isSuccess = roleService.removeById(id);
-        if (isSuccess) {
-            return Result.ok();
-        } else {
-            return Result.fail();
-        }
+        return isSuccess ? Result.ok() : Result.fail();
     }
-
 }

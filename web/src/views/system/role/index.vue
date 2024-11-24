@@ -99,7 +99,7 @@ onMounted(() => {
     >
       <el-form-item label="角色名称：" prop="roleName">
         <el-input
-          v-model="form.roleName"
+          v-model="form.name"
           placeholder="请输入角色名称"
           clearable
           class="!w-[180px]"
@@ -107,7 +107,7 @@ onMounted(() => {
       </el-form-item>
       <el-form-item label="角色标识：" prop="roleCode">
         <el-input
-          v-model="form.roleCode"
+          v-model="form.code"
           placeholder="请输入角色标识"
           clearable
           class="!w-[180px]"

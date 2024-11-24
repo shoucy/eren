@@ -21,14 +21,21 @@ public class Result<T> {
     /**
      * 响应信息，比异常的提示，警告，提示语等
      */
-    private String message;
+    private String msg;
+
+    /**
+     * 语义化属性，避免前端写大量的 if(code === 200)
+     */
+    public Boolean getSuccess(){
+        return code == ResultCode.SUCCESS.getCode();
+    }
 
     public static <T> Result<T> ok() {
-        return build(ResultCode.SUCCESS.getCode(), null, "操作成功");
+        return build(ResultCode.SUCCESS.getCode(), null, ResultCode.SUCCESS.getMsg());
     }
 
     public static <T> Result<T> ok(T data) {
-        return build(ResultCode.SUCCESS.getCode(), data, "操作成功");
+        return build(ResultCode.SUCCESS.getCode(), data, ResultCode.SUCCESS.getMsg());
     }
 
     public static <T> Result<T> ok(T data, String msg) {
@@ -36,7 +43,7 @@ public class Result<T> {
     }
 
     public static <T> Result<T> fail() {
-        return build(ResultCode.ERROR.getCode(), null, "操作失败");
+        return build(ResultCode.ERROR.getCode(), null, ResultCode.ERROR.getMsg());
     }
 
     public static <T> Result<T> fail(String msg) {
@@ -44,7 +51,7 @@ public class Result<T> {
     }
 
     public static <T> Result<T> fail(T data) {
-        return build(ResultCode.ERROR.getCode(), data, "操作失败");
+        return build(ResultCode.ERROR.getCode(), data, ResultCode.ERROR.getMsg());
     }
 
     public static <T> Result<T> fail(T data, String msg) {
@@ -59,7 +66,7 @@ public class Result<T> {
         Result<T> result = new Result<>();
         result.setCode(code);
         result.setData(data);
-        result.setMessage(msg);
+        result.setMsg(msg);
         return result;
     }
 }

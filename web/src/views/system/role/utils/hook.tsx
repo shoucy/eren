@@ -5,22 +5,17 @@ import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
-import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { getKeyList, deviceDetection } from "@pureadmin/utils";
-import {
-  getRoleList,
-  getRoleMenu,
-  getRoleMenuIds,
-  saveRole
-} from "@/api/system";
+import { getRoleMenu, getRoleMenuIds } from "@/api/system";
+import roleApi, { type Role } from "@/api/system/role";
 import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
 
 export function useRole(treeRef: Ref) {
   const form = reactive({
-    roleName: "",
-    roleCode: "",
-    status: ""
+    name: "",
+    code: "",
+    status: null
   });
   const curRow = ref();
   const formRef = ref();
@@ -53,11 +48,11 @@ export function useRole(treeRef: Ref) {
     },
     {
       label: "角色名称",
-      prop: "roleName"
+      prop: "name"
     },
     {
       label: "角色标识",
-      prop: "roleCode"
+      prop: "code"
     },
     {
       label: "状态",
@@ -122,7 +117,7 @@ export function useRole(treeRef: Ref) {
         draggable: true
       }
     )
-      .then(() => {
+      .then(async () => {
         switchLoadMap.value[index] = Object.assign(
           {},
           switchLoadMap.value[index],
@@ -130,25 +125,29 @@ export function useRole(treeRef: Ref) {
             loading: true
           }
         );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message(`已${row.status === 0 ? "停用" : "启用"}${row.roleName}`, {
-            type: "success"
-          });
-        }, 300);
+        await roleApi.save({
+          id: row.id,
+          status: row.status
+        });
+        // 关闭loading
+        switchLoadMap.value[index] = Object.assign(
+          {},
+          switchLoadMap.value[index],
+          {
+            loading: false
+          }
+        );
+        message(`已${row.status === 0 ? "停用" : "启用"}${row.roleName}`, {
+          type: "success"
+        });
       })
       .catch(() => {
         row.status === 0 ? (row.status = 1) : (row.status = 0);
       });
   }
 
-  function handleDelete(row) {
+  async function handleDelete(row) {
+    await roleApi.delete(row.id);
     message(`您删除了角色名称为${row.roleName}的这条数据`, { type: "success" });
     onSearch();
   }
@@ -167,11 +166,11 @@ export function useRole(treeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
-    const { data } = await getRoleList(toRaw(form));
+    const { data } = await roleApi.getList(toRaw(form));
     dataList.value = data.records;
-    pagination.total = data.total;
+    pagination.total = data.totalRow;
     pagination.pageSize = data.pageSize;
-    pagination.currentPage = data.currentPage;
+    pagination.currentPage = data.pageNumber;
 
     setTimeout(() => {
       loading.value = false;
@@ -184,13 +183,14 @@ export function useRole(treeRef: Ref) {
     onSearch();
   };
 
-  function openDialog(title = "新增", row?: FormItemProps) {
+  function openDialog(title = "新增", row?: Role) {
     addDialog({
       title: `${title}角色`,
       props: {
         formInline: {
-          roleName: row?.roleName ?? "",
-          roleCode: row?.roleCode ?? "",
+          id: row?.id,
+          name: row?.name ?? "",
+          code: row?.code ?? "",
           remark: row?.remark ?? ""
         }
       },
@@ -202,25 +202,22 @@ export function useRole(treeRef: Ref) {
       contentRenderer: () => h(editForm, { ref: formRef }),
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
-        const curData = options.props.formInline as FormItemProps;
-        function chores() {
-          message(`您${title}了角色名称为${curData.roleName}的这条数据`, {
-            type: "success"
-          });
-          done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
-        }
+        const curData = options.props.formInline as Role;
         FormRef.validate(async valid => {
           if (valid) {
             console.log("curData", curData);
             // 表单规则校验通过
-            if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              await saveRole(curData);
-              chores();
+            const resp = await roleApi.save(curData);
+            if (resp.success) {
+              message(`您${title}了角色名称为${curData.name}的这条数据`, {
+                type: "success"
+              });
+              onSearch(); // 刷新表格数据
+              done(); // 关闭弹框
             } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
+              message(resp.msg, {
+                type: "error"
+              });
             }
           }
         });

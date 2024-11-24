@@ -25,8 +25,8 @@ public class SysRoleTest {
 	@Test
 	public void testAdd() {
 		Role role = new Role();
-		role.setRoleName("测试角色");
-		role.setRoleCode("testRole");
+		role.setName("测试角色");
+		role.setCode("testRole");
 		int insert = roleMapper.insert(role);
 		System.out.println(insert);
 	}
